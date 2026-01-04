@@ -1,0 +1,129 @@
+<div class="manager-page">
+  <section class="page-header">
+    <div class="header-content">
+      <h1>Manager Dashboard</h1>
+      <p>Real-time control panel for restaurant operations</p>
+    </div>
+  </section>
+
+  <div class="manager-container">
+    <!-- Key Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">Queue</div>
+        <div class="metric-value">{{ getQueueCount() }}</div>
+        <div class="metric-subtext">waiting</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Available</div>
+        <div class="metric-value">{{ getAvailableTables() }}</div>
+        <div class="metric-subtext">tables</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Occupied</div>
+        <div class="metric-value">{{ getOccupiedTables() }}</div>
+        <div class="metric-subtext">tables</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Occupancy</div>
+        <div class="metric-value">{{ getOccupancyRate() }}%</div>
+        <div class="metric-subtext">rate</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions-section">
+      <div class="section-header">
+        <h2>Quick Actions</h2>
+      </div>
+      <div class="actions-grid">
+        <button class="action-card" (click)="seatNextCustomer()" [disabled]="loading">
+          <div class="action-icon">👥</div>
+          <div class="action-title">Seat Next Customer</div>
+          <div class="action-desc">Move from queue to table</div>
+        </button>
+        <button class="action-card" (click)="viewQueue()">
+          <div class="action-icon">📋</div>
+          <div class="action-title">View Queue</div>
+          <div class="action-desc">See waiting customers</div>
+        </button>
+        <button class="action-card" (click)="viewTables()">
+          <div class="action-icon">🍽️</div>
+          <div class="action-title">View Tables</div>
+          <div class="action-desc">Floor plan & status</div>
+        </button>
+        <button class="action-card" (click)="viewReservations()">
+          <div class="action-icon">📅</div>
+          <div class="action-title">Reservations</div>
+          <div class="action-desc">Manage bookings</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Queue Status -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>Queue Status</h3>
+        </div>
+        <div class="queue-summary">
+          <div class="summary-item">
+            <span class="summary-label">Waiting</span>
+            <span class="summary-value">{{ getQueueCount() }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Est. Wait</span>
+            <span class="summary-value">{{ getAvgWaitTime() }} min</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Longest</span>
+            <span class="summary-value">{{ getLongestWait() }} min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Status -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h3>Table Status</h3>
+        </div>
+        <div class="table-status">
+          <div class="status-row">
+            <span class="status-label">Available</span>
+            <span class="status-value available">{{ getAvailableTables() }}</span>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Reserved</span>
+            <span class="status-value reserved">{{ getReservedTables() }}</span>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Occupied</span>
+            <span class="status-value occupied">{{ getOccupiedTables() }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operations Log -->
+      <div class="dashboard-card full-width">
+        <div class="card-header">
+          <h3>Recent Activities</h3>
+        </div>
+        <div *ngIf="recentActivities.length > 0" class="activities-list">
+          <div *ngFor="let activity of recentActivities" class="activity-item">
+            <div class="activity-icon" [ngClass]="'icon-' + activity.type">
+              {{ activity.icon }}
+            </div>
+            <div class="activity-content">
+              <div class="activity-title">{{ activity.title }}</div>
+              <div class="activity-time">{{ activity.time }}</div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="recentActivities.length === 0" class="no-activities">
+          <p>No recent activities</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

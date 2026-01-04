@@ -1,0 +1,165 @@
+<div class="reservation-page">
+  <section class="page-header">
+    <div class="header-content">
+      <h1>Reservations</h1>
+      <p>Manage table reservations and bookings</p>
+    </div>
+  </section>
+
+  <div class="reservation-container">
+    <!-- Reservation Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon book-icon">📅</div>
+        <div class="stat-info">
+          <div class="stat-label">Total Bookings</div>
+          <div class="stat-value">{{ getTotalReservations() }}</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon today-icon">📆</div>
+        <div class="stat-info">
+          <div class="stat-label">Today's Bookings</div>
+          <div class="stat-value">{{ getTodayReservations() }}</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon pending-icon">⏳</div>
+        <div class="stat-info">
+          <div class="stat-label">Pending Confirmations</div>
+          <div class="stat-value">{{ getPendingReservations() }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sections-wrapper">
+      <!-- Booking Form -->
+      <div class="booking-form-section">
+        <div class="section-header">
+          <h2>New Reservation</h2>
+        </div>
+
+        <form class="reservation-form" (ngSubmit)="submitReservation()">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" [(ngModel)]="form.name" name="name">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" [(ngModel)]="form.email" name="email">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="tel" class="form-input" [(ngModel)]="form.phone" name="phone">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Date</label>
+              <input type="date" class="form-input" [(ngModel)]="form.date" name="date">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Time</label>
+              <input type="time" class="form-input" [(ngModel)]="form.time" name="time">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Guests</label>
+              <input type="number" class="form-input" [(ngModel)]="form.guests" name="guests">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Table Type</label>
+              <select class="form-input" [(ngModel)]="form.tableType" name="tableType">
+                <option value="standard">Standard</option>
+                <option value="window">Window Seat</option>
+                <option value="corner">Corner Table</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Special Requests</label>
+            <textarea class="form-input form-textarea" rows="3"
+              [(ngModel)]="form.notes" name="notes"></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn" [disabled]="loading">
+            {{ loading ? 'Booking...' : '+ Add Reservation' }}
+          </button>
+        </form>
+      </div>
+
+      <!-- Reservations List -->
+      <div class="reservations-list-section">
+        <div class="section-header">
+          <h2>Upcoming Reservations</h2>
+          <button class="refresh-btn" (click)="fetchReservations()" [disabled]="loading">↻</button>
+        </div>
+
+        <div *ngIf="loading" class="loading-state">
+          <p>Loading reservations</p>
+        </div>
+
+        <div *ngIf="!loading && reservationsList.length > 0" class="reservations-items">
+          <div *ngFor="let res of reservationsList" class="reservation-item">
+
+            <div class="reservation-header">
+              <div class="guest-info">
+                <div class="guest-name">{{ res.name }}</div>
+                <div class="guest-contact">{{ res.email }} • {{ res.phone }}</div>
+              </div>
+
+              <!-- FIXED STATUS BADGE -->
+              <span class="status-badge"
+                    [ngClass]="'status-' + res.status.toLowerCase()">
+                {{ res.status }}
+              </span>
+            </div>
+
+            <div class="reservation-details">
+              <div class="detail-item">
+                📅 {{ res.date | date:'MMM dd, yyyy' }}
+              </div>
+              <div class="detail-item">
+                🕐 {{ res.time }}
+              </div>
+              <div class="detail-item">
+                👥 {{ res.guests }} guests
+              </div>
+              <div class="detail-item">
+                🍽️ {{ res.tableType }}
+              </div>
+            </div>
+
+            <div class="reservation-notes" *ngIf="res.notes">
+              {{ res.notes }}
+            </div>
+
+            <div class="reservation-actions">
+              <!-- 🔴 FIXED -->
+              <button class="action-btn confirm-btn"
+                      *ngIf="res.status === 'PENDING'"
+                      (click)="confirmReservation(res)">
+                ✓ Confirm
+              </button>
+
+              <button class="action-btn cancel-btn"
+                      (click)="cancelReservation(res)">
+                ✕ Cancel
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <div *ngIf="!loading && reservationsList.length === 0" class="empty-state">
+          <p>No reservations yet</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

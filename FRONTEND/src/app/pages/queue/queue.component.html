@@ -1,0 +1,80 @@
+<div class="queue-page">
+  <section class="page-header">
+    <div class="header-content">
+      <h1>Queue Management</h1>
+      <p>Real-time waiting queue and estimated wait times</p>
+    </div>
+  </section>
+
+  <div class="queue-container">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon queue-icon">👥</div>
+        <div class="stat-info">
+          <div class="stat-label">Total in Queue</div>
+          <div class="stat-value">{{ getTotalQueueCount() }}</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon wait-icon">⏱️</div>
+        <div class="stat-info">
+          <div class="stat-label">Avg Wait Time</div>
+          <div class="stat-value">{{ getAverageWaitTime() }} min</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon tables-icon">🍽️</div>
+        <div class="stat-info">
+          <div class="stat-label">Available Tables</div>
+          <div class="stat-value">{{ getAvailableTables() }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Queue List -->
+    <div class="queue-list-section">
+      <div class="section-header">
+        <h2>Waiting Customers</h2>
+        <button class="join-queue-btn" (click)="openJoinDialog()" [disabled]="loading">
+          <span class="btn-icon">+</span>
+          {{ loading ? 'Adding...' : 'Add to Queue' }}
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading queue data</p>
+      </div>
+
+      <div *ngIf="!loading && queueList.length > 0" class="queue-items">
+        <div *ngFor="let item of queueList; let i = index" class="queue-item" [ngClass]="'position-' + (i + 1)">
+          <div class="queue-position">{{ i + 1 }}</div>
+          <div class="queue-details">
+            <div class="customer-name">{{ item.customer_name || 'Guest ' + item.user_id }}</div>
+            <div class="queue-meta">
+              <span class="party-size">{{ item.party_size }} guests</span>
+              <span class="wait-time">Wait: {{ getWaitTime(item.joined_at) }} min</span>
+            </div>
+          </div>
+          <div class="queue-actions">
+            <span class="status-badge" [ngClass]="'status-' + item.status.toLowerCase()">
+              {{ item.status }}
+            </span>
+            <button class="action-btn" (click)="callCustomer(item)" title="Call Customer">
+              ✓
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && queueList.length === 0" class="empty-state">
+        <div class="empty-icon">🪑</div>
+        <p>Queue is empty</p>
+        <button class="join-queue-btn primary" (click)="openJoinDialog()">
+          Add First Customer to Queue
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

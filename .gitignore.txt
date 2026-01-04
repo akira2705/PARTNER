@@ -1,0 +1,14 @@
+# Node
+node_modules/
+dist/
+build/
+
+# Angular
+.angular/
+.cache/
+
+# Env files
+.env
+
+# SQLite DB (optional – comment if you want DB included)
+*.db
